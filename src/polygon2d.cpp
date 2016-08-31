@@ -24,58 +24,110 @@
 #include <algorithm>
 #include <vector>
 
-struct Point
+/**
+ * Simple data structure to handle 2D points.
+ */
+struct Point2D
 {
-  Point() : x(0.0), y(0.0) {}
+  /**
+   * @brief Default constructor.
+   */
+  Point2D() : x(0.0), y(0.0) {}
 
-  Point(double px, double py) : x(px), y(py) {}
+  /**
+   * @brief Constructor.
+   * @param px, py The x-y coordinates defining the point.
+   */
+  Point2D(double px, double py) : x(px), y(py) {}
 
+  /**
+   * @brief Calculates the l1 norm of the point vector.
+   * @return The l1 norm.
+   */
   double l1Norm()
   {
     return std::fabs(x) + std::fabs(y);
   }
 
+  /**
+   * @brief Calculates the l2 norm of the point vector.
+   * @return The l2 norm.
+   */
   double l2Norm()
   {
     return std::sqrt(x * x + y * y);
   }
 
+  /**
+   * @brief Calculates the l-infinity norm of the point vector.
+   * @return The l-infinity norm.
+   */
   double lInfNorm()
   {
     return std::max(std::fabs(x), std::fabs(y) );
   }
 
-  double x, y;
+  double x, y;  /**< Holders of the coordinates of the point */
 };
 
 
-// TODO assumes convexity
+/**
+ * Class that defines and handles convex 2D polygons. Contains basic functionalities
+ * such as checking if a polygon contains a given point.
+ */
 class Polygon
 {
 public:
+  /**
+   * @brief Default constructor.
+   */
   Polygon() {}
 
+  /**
+   * @brief Constructor.
+   * @param size The size of the polygon (number of vertices).
+   */
   Polygon(size_t size)
   {
     poly_.reserve(size);
   }
 
-  Polygon(const std::vector<Point>& pt_vec)
+  /**
+   * @brief Constructor.
+   * @param pt_vec Vector of vertices describing the polygon.
+   */
+  Polygon(const std::vector<Point2D>& pt_vec)
   {
     poly_ = pt_vec;
   }
 
-  void addVertex(const Point& pt)
+  /**
+   * @brief Function that adds a vertex to the polygon.
+   * @param pt The vertex point to be added.
+   */
+  void addVertex(const Point2D& pt)
   {
     poly_.push_back(pt);
   }
 
-  std::vector<Point> getVertices()
+  /**
+   * @brief Function that retrieves the polygon as a list of its vertices.
+   * @return The polygon in vertex representation form.
+   */
+  std::vector<Point2D> getVertices()
   {
     return poly_;
   }
 
-  bool isInside(const Point& pt)
+  /**
+   * @brief Function that checks if a point is inside of the polygon. The check
+   * here is done by converting the vertex represented polygon into its facet
+   * representation and check if the point falls in the intersection of the half
+   * spaces created by the polygon's facets.
+   * @param pt The point to be checked.
+   * @return True if polygon contains the point; false otherwise.
+   */
+  bool isInside(const Point2D& pt)
   {
     if (poly_.empty() )
     {
@@ -120,7 +172,15 @@ public:
   }
 
 private:
-  void getLine(const Point& pt1, const Point& pt2,
+  /**
+   * @brief Function that calculates a line connecting two given points as an
+   * inward pointing normal and a distance value so that the equation
+   * [n1 n2] * [x y]' = d describes the line.
+   * @param[in] pt1, pt2 The two points that pass through the line.
+   * @param[out] normal The normal vector to the line.
+   * @param[out] distance The distance from the line to the origin.
+   */
+  void getLine(const Point2D& pt1, const Point2D& pt2,
     std::vector<double>& normal, double& distance)
   {
     double y_diff = pt2.y - pt1.y;
@@ -135,24 +195,25 @@ private:
   }
 
 private:
-  std::vector<Point> poly_;
+  std::vector<Point2D> poly_;  /**< The container that holds vertices of the polygon */
 };
 
 
+/**
+ * @brief The main function of the program to allow user interaction
+ * with the Point2D and Polygon classes.
+ * An example use case would be the following degenerate polygon
+ * Point2D p1(1, 1), p2(-1, 1);
+ * std::vector<Point2D> vertices;
+ * vertices.push_back(p1);
+ * vertices.push_back(p2);
+ * Polygon poly(vertices);
+ * Point2D pt(0, 1);
+ * poly.isInside(pt);
+ */
 int main()
 {
-  /* An example use case would be the following
-  Point p1(1, 1), p2(-1, 1), p3(-1, -1), p4(1, -1);
-  std::vector<Point> vertices;
-  vertices.push_back(p1);
-  vertices.push_back(p2);
-  vertices.push_back(p3);
-  vertices.push_back(p4);
-  Polygon poly(vertices);
-  Point pt(0.1, 0.5);
-  poly.isInside(pt);
-  */
-
+  // Get the number of vertices this polygon is to have
   size_t num_vertices;
   std::cout << "How many vertices does the polygon have? ";
   std::cin >> num_vertices;
@@ -168,7 +229,7 @@ int main()
     std::cin >> vx >> vy;
 
     // Create the vertex and add it to the polygon
-    Point vertex(vx, vy);
+    Point2D vertex(vx, vy);
     poly.addVertex(vertex);
   }
 
@@ -176,7 +237,7 @@ int main()
   double px, py;
   std::cout << "Now enter the point to check for inclusion: ";
   std::cin >> px >> py;
-  Point pt(px, py);
+  Point2D pt(px, py);
 
   // Check if point is inside of the polygon
   bool res = poly.isInside(pt);
