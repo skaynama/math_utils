@@ -1,23 +1,15 @@
 /**
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) 2016, all rights reserved.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*
-* Author: Shahab Kaynama
-*/
+ * NOTE: This entire file and its classes can be replaced by just a few lines
+ * of code using the boost library. Specifically boost's geometry::wthin
+ * can be invoked to decide if a geometry::model::polygon contains
+ * a geometry::model::d2::point_xy. I strongly recommend using that library
+ * instead as it is generic and can handle non-convex complicated shapes.
+ * This current library is a simple collection of code snippets with
+ * limited functionality and has been written recreationally over the span of
+ * a few minutes as an alternative to boost's powerful version.
+ *
+ * Author: Shahab Kaynama, copyright 2016, BSD License
+ */
 
 #include <iostream>
 #include <cmath>
@@ -72,8 +64,9 @@ struct Point2D
 
 
 /**
- * Class that defines and handles convex 2D polygons. Contains basic functionalities
- * such as checking if a polygon contains a given point.
+ * Class that defines and handles simple (without holes) convex 2D polygons.
+ * Contains basic functionalities such as checking if a polygon contains
+ * a given point.
  */
 class Polygon
 {
@@ -241,7 +234,7 @@ int main()
 
   // Check if point is inside of the polygon
   bool res = poly.isInside(pt);
-  std::cout << "Point is inside? " << res << std::endl;
+  std::cout << "Point is inside? " << (res? "yes" : "no") << std::endl;
   
   return 0;
 }
